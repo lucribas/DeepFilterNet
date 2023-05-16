@@ -93,6 +93,9 @@ jobs:
       - name: Install HDF5
         if: matrix.os == 'ubuntu-latest' && matrix.df_wheel == 'pyDF-data'
         run: |
+          apt-get install rubygems
+          gem install apt-spy2
+          apt-spy2 fix --commit --launchpad --country=US
           apt-get update
           apt-get install -y --no-install-recommends libhdf5-dev
 
