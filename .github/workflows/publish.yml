@@ -93,7 +93,8 @@ jobs:
       - name: Hack sources.list
         if: matrix.os == 'ubuntu-latest' && matrix.df_wheel == 'pyDF-data'
         run:  |
-          sed -i -- "s/deb.debian.org/archive.debian.org/g" /etc/apt/sources.list
+          cat /etc/apt/sources.list
+          sed -i -- 's/stable\/updates/stable-security\/updates/' /etc/apt/sources.list
 
       - name: Install HDF5
         if: matrix.os == 'ubuntu-latest' && matrix.df_wheel == 'pyDF-data'
