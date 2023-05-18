@@ -24,7 +24,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly
+          toolchain: stable
           target: ${{ matrix.target }}
       - name: Get the release version from the tag
         shell: bash
@@ -90,11 +90,14 @@ jobs:
           echo "DF version:  $(scripts/get_version.sh)"
           echo "DF_VERSION=$(scripts/get_version.sh)" >> $GITHUB_ENV
 
+      - name: Hack sources.list
+        if: matrix.os == 'ubuntu-latest' && matrix.df_wheel == 'pyDF-data'
+        run:  |
+          sed -i -- "s/deb.debian.org/archive.debian.org/g" /etc/apt/sources.list
+
       - name: Install HDF5
         if: matrix.os == 'ubuntu-latest' && matrix.df_wheel == 'pyDF-data'
         run: |
-          gem install apt-spy2
-          apt-spy2 fix --commit --launchpad --country=US
           apt-get update
           apt-get install -y --no-install-recommends libhdf5-dev
 
@@ -115,9 +118,11 @@ jobs:
           python -m pip install maturin
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@master
+        uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          profile: minimal
+          toolchain: stable
+          override: true
           target: ${{ matrix.target }}
 
       - name: Build wheel unix
@@ -207,7 +212,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        rust: [nightly]
+        rust: [stable]
         manylinux: [2014]
         python:
           # CPython
@@ -301,7 +306,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly
+          toolchain: stable
           target: ${{ matrix.target }}
 
       - name: Use Cross
@@ -406,7 +411,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly
+          toolchain: stable
           target: ${{ matrix.target }}
 
       - name: Use Cross
