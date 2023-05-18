@@ -93,13 +93,14 @@ jobs:
       - name: Hack sources.list
         if: matrix.os == 'ubuntu-latest' && matrix.df_wheel == 'pyDF-data'
         run:  |
-          cat /etc/apt/sources.list
-          sed -i -- 's/stable\/updates/stable-security\/updates/' /etc/apt/sources.list
+          curl https://raw.githubusercontent.com/vegardit/fast-apt-mirror.sh/v1/fast-apt-mirror.sh -o /usr/local/bin/fast-apt-mirror.sh
+          chmod 755 /usr/local/bin/fast-apt-mirror.sh
+          fast-apt-mirror.sh find --apply
 
       - name: Install HDF5
         if: matrix.os == 'ubuntu-latest' && matrix.df_wheel == 'pyDF-data'
         run: |
-          apt-get update
+          apt-get update || true
           apt-get install -y --no-install-recommends libhdf5-dev
 
       - name: Install Python
